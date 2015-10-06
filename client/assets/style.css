@@ -1,0 +1,112 @@
+@charset "utf-8";
+/* CSS Document */
+
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+body {
+  background-color: #111;
+  /*background-image: url('bg.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;*/
+  font-family: 'Montserrat', sans-serif;
+  color: #eee;
+  margin: 0px;
+}
+
+.top {
+  margin-bottom: 0px;
+  padding: 0px;
+  height: 16px;
+}
+.main {
+  padding: 16px 64px 16px 64px;
+}
+
+.red {
+  background-color: #bb0303;
+}
+
+.black {
+  background-color: #222;
+}
+
+table {
+  width:100%;
+  border-collapse: collapse;
+}
+table td {
+  padding: 8px;
+  border: 0px;
+}
+
+.btn {
+  background-color: #333;
+  cursor: pointer;
+  padding: 2px 12px 2px 12px;
+}
+.btn:hover, .btn:active {
+  background-color: #aa1414;
+}
+
+.right {
+  float: right;
+}
+
+/* Stole Caramel's grid system (github.com/lumios/caramel) */
+/*  Grid contributed to Caramel by github.com/gratimax */
+.row:before, .row:after {
+  content: " ";
+  display: table; }
+.row:after {
+  clear: both; }
+
+.box {
+  float: left;
+  margin-left: 1.25%;
+  margin-right: 1.25%; }
+
+@media (max-width: 800px) {
+  .box {
+    width: 100% !important;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 5px;
+    display: block;
+    float: none; } }
+.box.col-1 {
+  width: 5.83333%; }
+
+.box.col-2 {
+  width: 14.16667%; }
+
+.box.col-3 {
+  width: 22.5%; }
+
+.box.col-4 {
+  width: 30.83333%; }
+
+.box.col-5 {
+  width: 39.16667%; }
+
+.box.col-6 {
+  width: 47.5%; }
+
+.box.col-7 {
+  width: 55.83333%; }
+
+.box.col-8 {
+  width: 64.16667%; }
+
+.box.col-9 {
+  width: 72.5%; }
+
+.box.col-10 {
+  width: 80.83333%; }
+
+.box.col-11 {
+  width: 89.16667%; }
+
+.box.col-12 {
+  width: 97.5%; }

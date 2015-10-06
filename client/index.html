@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>KYUFOX Server Status</title>
+    <link href="assets/style.css" rel="stylesheet">
+    <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+      var socket = io('http://serverip.org:8000');
+      var notifs = false;
+      var allChat = false;
+
+      socket.on('event', function(data) {
+        parse(data);
+        console.log(data);
+      });
+
+      function parse(input) {
+        var data = JSON.parse(input);
+        if (data.text == "_joined_") {
+          if (notifs) {
+            newNotification(data.username, data.username + ' joined the game');
+          }
+        } else if (data.text == "_quit_") {
+          if (notifs) {
+            newNotification(data.username, data.username + ' left the game');
+          }
+        } else {
+          if (allChat) {
+            newNotification(data.username, data.text);
+          }
+        }
+      }
+
+      socket.on('status', function(data) {
+        status(data);
+        console.log(data);
+      });
+
+      function status(input) {
+        var data = JSON.parse(input);
+        $("#status").text(data.status);
+        $("#online").text(data.online);
+        $("#max").text(data.max);
+        $("#players").text(data.players);
+        $("#motd").text(data.motd);
+      }
+
+      function getPermission(type) {
+        if(!('Notification' in window)){
+          alert('Your browser doesn\'t support HTML5 Notifications. Consider upgrading your browser.');
+          $("#run").show();
+          $("#close").hide();
+          $("#info1").show();
+          $("#info2").hide();
+          notifs = false;
+          $("#chaton").show();
+          $("#chatoff").hide();
+          $("#info3").show();
+          $("#info4").hide();
+          allChat = false;
+          return;
+        }
+
+        Notification.requestPermission(function(permission){
+          if (Notification.permission == 'granted') {
+            var notification = new Notification('Minecraft', {
+              body: type + ' Notifications Enabled'
+            });
+
+            setTimeout(function(){
+              notification.close();
+            }, 2500);
+          }
+        });
+      }
+
+      function newNotification(user, body) {
+        if (Notification.permission == 'granted') {
+          var notification = new Notification(user, {
+            body: body,
+            icon: 'http://cravatar.eu/helmavatar/' + user + '/96'
+          });
+
+          setTimeout(function(){
+            notification.close();
+          }, 7500);
+
+        }
+
+        else if (Notification.permission != 'denied') {
+          getPermission(null);
+        }
+      }
+
+      $(document).ready(function() {
+        $("#run").click(function(){
+          $("#run").hide();
+          $("#close").show();
+          $("#info1").hide();
+          $("#info2").show();
+          getPermission('Player');
+          notifs = true;
+        });
+        $("#close").click(function(){
+          $("#run").show();
+          $("#close").hide();
+          $("#info1").show();
+          $("#info2").hide();
+          notifs = false;
+        });
+        $("#chaton").click(function(){
+          $("#chaton").hide();
+          $("#chatoff").show();
+          $("#info3").hide();
+          $("#info4").show();
+          getPermission('Chat');
+          allChat = true;
+        });
+        $("#chatoff").click(function(){
+          $("#chaton").show();
+          $("#chatoff").hide();
+          $("#info3").show();
+          $("#info4").hide();
+          allChat = false;
+        });
+        $("#refresh").click(function(){
+          $("#online").text('?');
+          $("#max").text('?');
+          $("#players").text('Loading...');
+          socket.emit('status');
+        });
+      });
+    </script>
+</head>
+<body>
+<div class="top black" style="margin-top: 128px;"></div>
+<div class="main red" style="margin-top: 0px; font-size: 48px; text-align: center;">
+  serverip.org : <span id="status">Unknown</span>
+</div>
+<div class="main black" id="motd" style="text-align: center;">&nbsp;</div>
+
+<div class="row">
+  <div class="box col-6" style="margin-top: 64px;">
+
+    <div class="top black"></div>
+    <div class="main red">
+      <span class="btn right" id="refresh">REFRESH</span>
+      Players Online: <span id="online">?</span>/<span id="max">?</span>
+    </div>
+    <div>
+      <div class="main black" id="players">Loading...</div>
+    </div>
+
+  </div>
+  <div class="box col-6" style="margin-top: 64px;">
+
+    <div class="top black"></div>
+    <div class="main red">
+      <span class="btn right" id="run">TURN ON</span><span class="btn right" id="close" style="display: none;">TURN OFF</span>
+      Player Notifications
+    </div>
+    <div class="main black" id="info1">Turn on to receive notifications when someone joins or leaves the server.</div>
+    <div class="main black" id="info2" style="display: none;">You will receive notifications when someone joins or leaves the server.</div>
+    <div class="main red" id="info">
+      <span class="btn right" id="chaton">TURN ON</span><span class="btn right" id="chatoff" style="display: none;">TURN OFF</span>
+      Chat Notifications
+    </div>
+    <div class="main black" id="info3">Turn on to receive notifications when someone chats on the server.</div>
+    <div class="main black" id="info4" style="display: none;">You will receive notifications when someone chats on the server.</div>
+
+  </div>
+</div>
+
+</body>
+</html>
